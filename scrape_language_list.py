@@ -1,4 +1,4 @@
-import bs4 
+import bs4
 from urllib.request import urlopen as uReq 
 from bs4 import BeautifulSoup as soup 
 
@@ -12,8 +12,8 @@ menu = page_soup.find("div", {"id" : "languages-menuitems"})
 
 containers = menu.findAll("a", {"class" : "select-menu-item"})
 
-out_filename = "langList.csv"
-headers = "language, link \n"
+out_filename = "./repo-namelists/lang_list.csv"
+headers = "language,link\n"
 
 f = open(out_filename, "w")
 f.write(headers)
