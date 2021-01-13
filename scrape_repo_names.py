@@ -3,8 +3,8 @@ from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup as soup 
 import pandas as pd
 
-myLangs = ['C++', 'HTML', 'Java', 'JavaScript', 'C']
-myLangsFormatted = ['c++', 'html', 'java', 'javascript', 'c']
+myLangs = ['C++', 'HTML', 'Java', 'Python']
+myLangsFormatted = ['c++', 'html', 'java', 'python']
 
 df = pd.read_csv('./repo-namelists/lang_list.csv')
 
