@@ -1,5 +1,5 @@
-#### ./code-repos/
-#### Example of folder structure.
+./code-repos/
+Example of folder structure.
 
 .
 ├── .gitignore

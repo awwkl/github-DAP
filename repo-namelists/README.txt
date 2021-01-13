@@ -1,5 +1,5 @@
-#### ./repo-namelists/
-#### Example of folder structure
+./repo-namelists/
+Example of folder structure
 
 .
 ├── .gitignore
