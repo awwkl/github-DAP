@@ -91,7 +91,8 @@ keyword_list = ['class', 'constructor', 'function', 'method', 'field', 'static',
 
 symbol_list = ['{', '}', '(', ')', '[', ']', '.', ',', ';', '+', '-', '*', '/', '&', '|', '<', '>', '=', '~']
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
+def tokenize_files():
 
     dirname = os.path.dirname(__file__)
     filename = os.path.join(dirname, './test_files')
