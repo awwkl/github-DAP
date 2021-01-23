@@ -2,11 +2,11 @@ import os
 import git
 import pandas as pd
 
-def clone_repos(lang, max_repos_per_lang=9):
+def clone_repos(lang, max_repos_per_lang=5):
     repo_list = pd.read_csv(f'./repo-namelists/list_{lang}.csv')
 
     for id, repo_name in repo_list['repo_name'].items():
-        if id > max_repos_per_lang:
+        if id >= max_repos_per_lang:
             break
         git_url = f'git@github.com:{repo_name}.git'
         clone_dir = f'./code-repos/{lang}/{id}'
