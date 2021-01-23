@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup as soup
 import pandas as pd
 
 def scrape():
-    myLangs = ['C++', 'HTML', 'Java', 'Python']
-    myLangsFormatted = ['c++', 'html', 'java', 'python']
+    myLangs = ['HTML', 'Java', 'Python']
+    myLangsFormatted = ['html', 'java', 'python']
 
     df = pd.read_csv('./repo-namelists/lang_list.csv')
 
