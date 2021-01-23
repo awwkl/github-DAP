@@ -4,6 +4,9 @@ import collections
 import numpy as np
 import pandas as pd
 
+num_tokens_per_lang = 40
+num_tokens_to_show = 15
+
 counter_html = collections.Counter()
 counter_java = collections.Counter()
 counter_py = collections.Counter()
@@ -40,17 +43,16 @@ def build_token_dicts(dir_search='./code-repos'):
             }
             lang_counters[ext].update(tokens)
 
+    
     df = pd.DataFrame()
     for lang, counter in lang_counters.items():
         print("Files with extension {%s}: %d" % (lang, num_files[lang]))
-        df[lang] = [token for (token, count) in counter.most_common(10)]
-        top_tokens[lang] = list(df[lang])
+        df[lang] = [token for (token, count) in counter.most_common(num_tokens_per_lang)]
         
-    df.to_csv('top_tokens.csv')
-    print(df.head(n=30))
-
-    top_tokens['all'] = top_tokens['.html'] + top_tokens['.java'] + top_tokens['.py']
-    print(len(top_tokens['all']))
+    df.to_csv('processed_data/top_tokens.csv')
+    print("These are the top %d tokens for the 3 languages" % (num_tokens_to_show))
+    print(df.head(n=num_tokens_to_show))
+    print()
 
 def numerical_vector(filepath):
     tokens = tokenize(filepath)
@@ -61,7 +63,7 @@ def numerical_vector(filepath):
     return vector
 
 def build_dataset(dir_search='./code-repos'):
-    top_tokens_df = pd.read_csv('top_tokens.csv')
+    top_tokens_df = pd.read_csv('processed_data/top_tokens.csv')
     for x in ['.html', '.java', '.py']:
         top_tokens[x] = list(top_tokens_df[x])
         top_tokens['all'] += top_tokens[x]
@@ -91,7 +93,7 @@ def build_dataset(dir_search='./code-repos'):
         columns=list(range(num_features))
     )
     final_df['label'] = labels
-    final_df.to_csv('final_df.csv')
+    final_df.to_csv('processed_data/final_df.csv')
     print(final_df)
 
 # if __name__ == "__main__":
