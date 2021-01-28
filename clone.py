@@ -2,7 +2,7 @@ import os
 import git
 import pandas as pd
 
-def clone_repos(lang, max_repos_per_lang=5):
+def clone_repos(lang, max_repos_per_lang=10):
     repo_list = pd.read_csv(f'./repo-namelists/list_{lang}.csv')
 
     for id, repo_name in repo_list['repo_name'].items():
