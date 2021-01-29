@@ -28,6 +28,12 @@ counter_py = collections.Counter()
 num_files = {'.html': 0, '.java': 0, '.py': 0}
 top_tokens = {'.html': [], '.java': [], '.py': [], 'all': []}
 
+# if __name__ == "__main__":
+def preprocess_repos():
+    generate_file_lists()
+    build_token_dicts()
+    build_dataset()
+
 def generate_file_lists():
     file_list_full = []
     for root, subdir, files in os.walk(path_repos):
@@ -146,9 +152,3 @@ def build_dataset():
     df_test['label'] = y_test
     df_test.to_csv(path_df_test, index=False)
     print(df_test)
-
-# if __name__ == "__main__":
-def preprocess_repos():
-    generate_file_lists()
-    build_token_dicts()
-    build_dataset()
