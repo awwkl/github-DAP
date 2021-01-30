@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 
 # some global vars that are used by the functions, can be easily changed
 num_tokens_per_lang = 40
-num_tokens_to_show = 15
+num_tokens_to_show = 20
 
 # path_curr = os.path.dirname(__file__)   # pathname of this module
 # path_repos = os.path.join(path_curr, path_repos)
@@ -21,12 +21,16 @@ path_file_list_train = path_dir_for_processed_data + 'file_list_train.csv'
 path_file_list_test = path_dir_for_processed_data + 'file_list_test.csv'
 path_top_tokens_per_lang = path_dir_for_processed_data + 'top_tokens_per_lang.csv'
 
-desired_file_extensions = ['.html', '.java', '.py']
+desired_file_extensions = ['.html', '.java', '.py', '.c', '.cpp', '.rb', '.php']
 counter_html = collections.Counter()
 counter_java = collections.Counter()
 counter_py = collections.Counter()
-num_files = {'.html': 0, '.java': 0, '.py': 0}
-top_tokens = {'.html': [], '.java': [], '.py': [], 'all': []}
+counter_c = collections.Counter()
+counter_cpp = collections.Counter()
+counter_rb = collections.Counter()
+counter_php = collections.Counter()
+num_files = {'.html': 0, '.java': 0, '.py': 0, '.c': 0, '.cpp': 0, '.rb': 0, '.php': 0}
+top_tokens = {'.html': [], '.java': [], '.py': [], '.c': [], '.cpp': [], '.rb': [], '.php': [], 'all': []}
 
 # if __name__ == "__main__":
 def preprocess_repos():
@@ -39,8 +43,11 @@ def generate_file_lists():
     for root, subdir, files in os.walk(path_repos):
         for file in files:
             ext = os.path.splitext(file)[-1].lower()
-            if not ext in ['.html', '.java', '.py']:
+            if not ext in ['.html', '.java', '.py', '.c', '.cpp', '.rb', '.php']:
                 continue
+            if num_files[ext] >= 2000:  # max 1000 files for each lang
+                continue
+            num_files[ext] += 1
             filepath = os.path.join(root, file)
             file_list_full.append(filepath)
 
@@ -69,15 +76,20 @@ def build_token_dicts(dir_search='./code-repos'):
 
     for filepath in filepaths:
         ext = os.path.splitext(filepath)[-1].lower()
-        if not ext in ['.html', '.java', '.py']:
+        if not ext in ['.html', '.java', '.py', '.c', '.cpp', '.rb', '.php']:
             continue
-
-        tokens = tokenize(filepath)
-        num_files[ext] += 1
+        try:
+            tokens = tokenize(filepath)
+        except:
+            continue
         lang_counters = {
             ".html": counter_html,
             ".java": counter_java,
             ".py": counter_py,
+            ".c": counter_c,
+            ".cpp": counter_cpp,
+            ".rb": counter_rb,
+            ".php": counter_php,
         }
         lang_counters[ext].update(tokens)
     
@@ -87,7 +99,7 @@ def build_token_dicts(dir_search='./code-repos'):
         df[lang] = [token for (token, count) in counter.most_common(num_tokens_per_lang)]
         
     df.to_csv(path_top_tokens_per_lang)
-    print("These are the top %d tokens for the 3 languages" % (num_tokens_to_show))
+    print("These are the top %d tokens for the 7 languages" % (num_tokens_to_show))
     print(df.head(n=num_tokens_to_show))
     print()
 
@@ -101,7 +113,7 @@ def numerical_vector(filepath):
 
 def build_dataset():
     df_top_tokens = pd.read_csv(path_top_tokens_per_lang)
-    for x in ['.html', '.java', '.py']:
+    for x in ['.html', '.java', '.py', '.c', '.cpp', '.rb', '.php']:
         top_tokens[x] = list(df_top_tokens[x])
         top_tokens['all'] += top_tokens[x]
 
@@ -119,7 +131,7 @@ def build_dataset():
     filepaths = df['filepaths']
     for filepath in filepaths:
         ext = os.path.splitext(filepath)[-1].lower()
-        if not ext in ['.html', '.java', '.py']:
+        if not ext in ['.html', '.java', '.py', '.c', '.cpp', '.rb', '.php']:
             continue
 
         y_train.append(ext)
@@ -138,7 +150,7 @@ def build_dataset():
     filepaths = df['filepaths']
     for filepath in filepaths:
         ext = os.path.splitext(filepath)[-1].lower()
-        if not ext in ['.html', '.java', '.py']:
+        if not ext in ['.html', '.java', '.py', '.c', '.cpp', '.rb', '.php']:
             continue
 
         y_test.append(ext)
