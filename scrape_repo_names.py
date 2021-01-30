@@ -1,11 +1,12 @@
 import bs4
+import os
 from urllib.request import urlopen as uReq 
 from bs4 import BeautifulSoup as soup 
 import pandas as pd
 
 def scrape():
-    myLangs = ['HTML', 'Java', 'Python']
-    myLangsFormatted = ['html', 'java', 'python']
+    myLangs = ['HTML', 'Java', 'Python', 'C', 'C++', 'Ruby', 'PHP']
+    myLangsFormatted = ['html', 'java', 'python', 'c', 'c++', 'ruby', 'php']
 
     df = pd.read_csv('./repo-namelists/lang_list.csv')
 
@@ -25,6 +26,10 @@ def scrape():
 
         # write to file e.g. "list_c++.csv"
         out_filename = f'./repo-namelists/list_{myLangsFormatted[i]}.csv'
+        # if repo namelist has been created, do not create again
+        if os.path.exists(out_filename):
+            continue
+
         headers = "repo_name\n"
         f = open(out_filename, "w")
         f.write(headers)
