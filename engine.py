@@ -21,8 +21,9 @@ if __name__ == "__main__" :
     print()
     x = input('Clone the repositories from GitHub? [y/n]: ')
     if x.lower() in ['y', 'yes']:
+        y = input('[https/ssh]: ')
         print("Cloning the repositories from GitHub...")
-        clone.clone_languages()
+        clone.clone_languages(y.lower())
 
     # Preprocess the textual data (source files) into numerical data
     print()
