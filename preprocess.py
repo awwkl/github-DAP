@@ -13,11 +13,13 @@ num_tokens_to_show = 20
 # path_repos = os.path.join(path_curr, path_repos)
 
 path_df_train = 'processed_data/df_train.csv'
+path_df_valid = 'processed_data/df_valid.csv'
 path_df_test = 'processed_data/df_test.csv'
 path_repos = './code-repos'
 path_dir_for_processed_data = './processed_data/'
 path_file_list_full = path_dir_for_processed_data + 'file_list_full.csv'
 path_file_list_train = path_dir_for_processed_data + 'file_list_train.csv'
+path_file_list_valid = path_dir_for_processed_data + 'file_list_valid.csv'
 path_file_list_test = path_dir_for_processed_data + 'file_list_test.csv'
 path_top_tokens_per_lang = path_dir_for_processed_data + 'top_tokens_per_lang.csv'
 
@@ -45,7 +47,7 @@ def generate_file_lists():
             ext = os.path.splitext(file)[-1].lower()
             if not ext in ['.html', '.java', '.py', '.c', '.cpp', '.rb', '.php']:
                 continue
-            if num_files[ext] >= 2000:  # max 1000 files for each lang
+            if num_files[ext] >= 2000:  # max 2000 files for each lang
                 continue
             num_files[ext] += 1
             filepath = os.path.join(root, file)
@@ -56,9 +58,14 @@ def generate_file_lists():
     df_file_list_full.to_csv(path_file_list_full)
 
     df_file_list_train = pd.DataFrame()
+    df_file_list_valid = pd.DataFrame()
     df_file_list_test = pd.DataFrame()
-    df_file_list_train['filepaths'], df_file_list_test['filepaths'] = train_test_split(df_file_list_full['filepaths'])
+
+    # produces a 60%, 20%, 20% split for training, validation and test sets
+    df_file_list_train['filepaths'], df_file_list_valid['filepaths'], df_file_list_test['filepaths'] = np.split(df_file_list_full['filepaths'].sample(frac=1), [int(.6*len(df_file_list_full['filepaths'])), int(.8*len(df_file_list_full['filepaths']))])
+
     df_file_list_train.to_csv(path_file_list_train)
+    df_file_list_valid.to_csv(path_file_list_valid)
     df_file_list_test.to_csv(path_file_list_test)
 
 def tokenize(filepath):
@@ -123,6 +130,10 @@ def build_dataset():
     X_train = np.empty((0, num_features))
     y_train = []
 
+    df_valid = pd.DataFrame()
+    X_valid = np.empty((0, num_features))
+    y_valid = []
+
     df_test = pd.DataFrame()
     X_test = np.empty((0, num_features))
     y_test = []
@@ -145,6 +156,25 @@ def build_dataset():
     df_train['label'] = y_train
     df_train.to_csv(path_df_train, index=False)
     print(df_train)
+
+    df = pd.read_csv(path_file_list_valid)
+    filepaths = df['filepaths']
+    for filepath in filepaths:
+        ext = os.path.splitext(filepath)[-1].lower()
+        if not ext in ['.html', '.java', '.py', '.c', '.cpp', '.rb', '.php']:
+            continue
+
+        y_valid.append(ext)
+        vector = numerical_vector(filepath)
+        X_valid = np.vstack((X_valid, vector))
+
+    df_valid = pd.DataFrame(
+        data=X_valid,
+        columns=list(range(num_features))
+    )
+    df_valid['label'] = y_valid
+    df_valid.to_csv(path_df_valid, index=False)
+    print(df_valid)
 
     df = pd.read_csv(path_file_list_test)
     filepaths = df['filepaths']
