@@ -72,8 +72,8 @@ def generate_file_lists():
             ext = os.path.splitext(file)[-1].lower()
             if not ext in lang_exts_with_dot:
                 continue
-            if num_files[ext] >= 2000:  # max 2000 files for each lang
-                continue
+            # if num_files[ext] >= 2000:  # max 2000 files for each lang
+            #     continue
             num_files[ext] += 1
             filepath = os.path.join(root, file)
             file_list_full.append(filepath)
@@ -84,7 +84,8 @@ def generate_file_lists():
     df_file_list_full['label'] = labels_full
     df_file_list_full.to_csv(path_file_list_full)
 
-    num_files_per_lang = min(num_files.values()) // 100 * 100    # round down to next 100
+    num_files_per_lang = min(num_files.values()) // 100 * 100   # round down to next 100
+    num_files_per_lang = min(2000, num_files_per_lang)          # do not use more than 2000
     df_file_list_subset = df_file_list_full.groupby('label').sample(num_files_per_lang)
     df_file_list_subset.to_csv(path_file_list_subset)
     
