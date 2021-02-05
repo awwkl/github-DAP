@@ -186,7 +186,7 @@ def build_dataset():
 
     df_train = pd.DataFrame(
         data=X_train,
-        columns=list(range(num_features))
+        columns=top_tokens['all']
     )
     df_train['label'] = y_train
     df_train.to_csv(path_df_train, index=False)
@@ -207,7 +207,7 @@ def build_dataset():
 
     df_valid = pd.DataFrame(
         data=X_valid,
-        columns=list(range(num_features))
+        columns=top_tokens['all']
     )
     df_valid['label'] = y_valid
     df_valid.to_csv(path_df_valid, index=False)
@@ -228,7 +228,7 @@ def build_dataset():
 
     df_test = pd.DataFrame(
         data=X_test,
-        columns=list(range(num_features))
+        columns=top_tokens['all']
     )
     df_test['label'] = y_test
     df_test.to_csv(path_df_test, index=False)
