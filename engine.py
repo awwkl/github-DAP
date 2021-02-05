@@ -5,7 +5,7 @@ import scrape_repo_names
 import clone
 import preprocess
 
-max_repos_per_lang = 2
+max_repos_per_lang = 5
 # langs_name = ['HTML', 'C', 'PHP']
 # langs_extension = ['html', 'c', 'php']
 langs_name = ['HTML', 'Java', 'Python', 'C', 'C++', 'Ruby', 'PHP']

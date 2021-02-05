@@ -17,7 +17,7 @@ def clone_repos(option, lang_ext, max_repos_per_lang):
 
         git_url = f'{git_url_prefix}{repo_name}'
         clone_dir = f'./code-repos/{lang_ext}/{id}'
-        clone = f'git clone --quiet {git_url} {clone_dir}'
+        clone = f'git clone --quiet --depth 1 {git_url} {clone_dir}'
 
         # if repo has been cloned, do not clone again
         if os.path.exists(clone_dir):
