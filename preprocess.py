@@ -6,7 +6,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 # some global vars that are used by the functions, can be easily changed
-num_tokens_per_lang = 20
+num_tokens_per_lang = 40
 num_tokens_to_show = 20
 
 # path_curr = os.path.dirname(__file__)   # pathname of this module
@@ -72,8 +72,6 @@ def generate_file_lists():
             ext = os.path.splitext(file)[-1].lower()
             if not ext in lang_exts_with_dot:
                 continue
-            # if num_files[ext] >= 2000:  # max 2000 files for each lang
-            #     continue
             num_files[ext] += 1
             filepath = os.path.join(root, file)
             file_list_full.append(filepath)
@@ -85,7 +83,7 @@ def generate_file_lists():
     df_file_list_full.to_csv(path_file_list_full)
 
     num_files_per_lang = min(num_files.values()) // 100 * 100   # round down to next 100
-    num_files_per_lang = min(2000, num_files_per_lang)          # do not use more than 2000
+    # num_files_per_lang = min(2000, num_files_per_lang)          # do not use more than 2000
     df_file_list_subset = df_file_list_full.groupby('label').sample(num_files_per_lang)
     df_file_list_subset.to_csv(path_file_list_subset)
     
@@ -122,6 +120,7 @@ def build_token_dicts(dir_search='./code-repos'):
     df = pd.read_csv(path_file_list_train)
     filepaths = df['filepaths']
 
+    file_count = 0
     for filepath in filepaths:
         ext = os.path.splitext(filepath)[-1].lower()
         if not ext in lang_exts_with_dot:
@@ -130,7 +129,10 @@ def build_token_dicts(dir_search='./code-repos'):
             tokens = tokenize(filepath)
         except:
             continue
+        
         lang_counters[ext].update(tokens)
+        file_count += 1
+        print(file_count)
     
     df = pd.DataFrame()
     for lang, counter in lang_counters.items():
@@ -156,6 +158,8 @@ def build_dataset():
         top_tokens[x] = list(df_top_tokens[x])
         top_tokens['all'] += top_tokens[x]
 
+    # remove duplicated tokens from top_tokens['all']
+    top_tokens['all'] = list(set(top_tokens['all']))
     num_features = len(top_tokens['all'])
 
     df_train = pd.DataFrame()
@@ -170,6 +174,7 @@ def build_dataset():
     X_test = np.empty((0, num_features), dtype=np.uint32)
     y_test = []
 
+    file_count = 0
     df = pd.read_csv(path_file_list_train)
     filepaths = df['filepaths']
     for filepath in filepaths:
@@ -183,6 +188,9 @@ def build_dataset():
             continue
         y_train.append(ext)
         X_train = np.vstack((X_train, vector))
+        
+        file_count += 1
+        print(file_count)
 
     df_train = pd.DataFrame(
         data=X_train,
@@ -191,6 +199,7 @@ def build_dataset():
     df_train['label'] = y_train
     df_train.to_csv(path_df_train, index=False)
 
+    file_count = 0
     df = pd.read_csv(path_file_list_valid)
     filepaths = df['filepaths']
     for filepath in filepaths:
@@ -205,6 +214,9 @@ def build_dataset():
         y_valid.append(ext)
         X_valid = np.vstack((X_valid, vector))
 
+        file_count += 1
+        print(file_count)
+
     df_valid = pd.DataFrame(
         data=X_valid,
         columns=top_tokens['all']
@@ -212,6 +224,7 @@ def build_dataset():
     df_valid['label'] = y_valid
     df_valid.to_csv(path_df_valid, index=False)
 
+    file_count = 0
     df = pd.read_csv(path_file_list_test)
     filepaths = df['filepaths']
     for filepath in filepaths:
@@ -225,7 +238,10 @@ def build_dataset():
             continue
         y_test.append(ext)
         X_test = np.vstack((X_test, vector))
-
+        
+        file_count += 1
+        print(file_count)
+        
     df_test = pd.DataFrame(
         data=X_test,
         columns=top_tokens['all']
