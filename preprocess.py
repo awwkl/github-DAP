@@ -4,6 +4,7 @@ import collections
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import sys
 
 # some global vars that are used by the functions, can be easily changed
 num_tokens_per_lang = 40
@@ -119,6 +120,7 @@ def tokenize(filepath):
 def build_token_dicts(dir_search='./code-repos'):
     df = pd.read_csv(path_file_list_train)
     filepaths = df['filepaths']
+    filepaths_length = len(filepaths)
 
     file_count = 0
     for filepath in filepaths:
@@ -132,15 +134,19 @@ def build_token_dicts(dir_search='./code-repos'):
         
         lang_counters[ext].update(tokens)
         file_count += 1
-        print(file_count)
-    
+        sys.stdout.write('\r')
+        sys.stdout.write("Building token dict: [%-20s] %d%%" % ('='*int(20 / filepaths_length * file_count), int(100 / filepaths_length * file_count)))
+        sys.stdout.flush()
+
+    print("\n")
+
     df = pd.DataFrame()
     for lang, counter in lang_counters.items():
         print("Files with extension {%s}: %d" % (lang, num_files[lang]))
         df[lang] = [token for (token, count) in counter.most_common(num_tokens_per_lang)]
         
     df.to_csv(path_top_tokens_per_lang)
-    print("These are the top %d tokens for the %d languages" % (num_tokens_to_show, len(lang_exts_with_dot)))
+    print("\nThese are the top %d tokens for the %d languages" % (num_tokens_to_show, len(lang_exts_with_dot)))
     print(df.head(n=num_tokens_to_show))
     print()
 
@@ -177,6 +183,8 @@ def build_dataset():
     file_count = 0
     df = pd.read_csv(path_file_list_train)
     filepaths = df['filepaths']
+    filepaths_length = len(filepaths)
+
     for filepath in filepaths:
         ext = os.path.splitext(filepath)[-1].lower()
         if not ext in lang_exts_with_dot:
@@ -190,7 +198,11 @@ def build_dataset():
         X_train = np.vstack((X_train, vector))
         
         file_count += 1
-        print(file_count)
+        sys.stdout.write('\r')
+        sys.stdout.write("Building df_train: [%-20s] %d%%" % ('='*int(20 / filepaths_length * file_count), int(100 / filepaths_length * file_count)))
+        sys.stdout.flush()
+
+    print()
 
     df_train = pd.DataFrame(
         data=X_train,
@@ -202,6 +214,8 @@ def build_dataset():
     file_count = 0
     df = pd.read_csv(path_file_list_valid)
     filepaths = df['filepaths']
+    filepaths_length = len(filepaths)
+
     for filepath in filepaths:
         ext = os.path.splitext(filepath)[-1].lower()
         if not ext in lang_exts_with_dot:
@@ -215,7 +229,11 @@ def build_dataset():
         X_valid = np.vstack((X_valid, vector))
 
         file_count += 1
-        print(file_count)
+        sys.stdout.write('\r')
+        sys.stdout.write("Building df_valid: [%-20s] %d%%" % ('='*int(20 / filepaths_length * file_count), int(100 / filepaths_length * file_count)))
+        sys.stdout.flush()
+
+    print()
 
     df_valid = pd.DataFrame(
         data=X_valid,
@@ -227,6 +245,8 @@ def build_dataset():
     file_count = 0
     df = pd.read_csv(path_file_list_test)
     filepaths = df['filepaths']
+    filepaths_length = len(filepaths)
+
     for filepath in filepaths:
         ext = os.path.splitext(filepath)[-1].lower()
         if not ext in lang_exts_with_dot:
@@ -240,8 +260,12 @@ def build_dataset():
         X_test = np.vstack((X_test, vector))
         
         file_count += 1
-        print(file_count)
+        sys.stdout.write('\r')
+        sys.stdout.write("Building df_test : [%-20s] %d%%" % ('='*int(20 / filepaths_length * file_count), int(100 / filepaths_length * file_count)))
+        sys.stdout.flush()
         
+    print("\n")
+
     df_test = pd.DataFrame(
         data=X_test,
         columns=top_tokens['all']
@@ -251,7 +275,9 @@ def build_dataset():
 
     print("df_train.csv:")
     print(df_train['label'].value_counts())
+    print()
     print("df_valid.csv:")
     print(df_valid['label'].value_counts())
+    print()
     print("df_test.csv:")
     print(df_test['label'].value_counts())
