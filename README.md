@@ -16,8 +16,12 @@
 #### `model-training/` contains the files for training our ML models
 - `*.ipynb` jupyter notebooks contain our machine learning code
 
+#### `streamlit/` contains the files for streamlit
+- `streamlit-app.py` is the streamlit application
+
 #### How to Explore our code
 - `git clone` this repo
-- `cd dataframe-building/ && python engine.py` to test our python scripts for scraping, cloning and preprocessing of data
+- `python engine.py` in the `dataframe-building/` directory to test our python scripts for scraping, cloning and preprocessing of data
 - `model-training/*.ipynb` jupyter notebooks for our model training code
+- `streamlit run streamlit-app.py` in the `streamlit/` directory to run the streamlit application 
 - other features not implemented yet
