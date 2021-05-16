@@ -164,6 +164,8 @@ def vectorize_file(filepath):
     return vectorize(tokens)
 
 def populate_top_tokens():
+    global top_tokens
+    
     df_top_tokens = pd.read_csv(path_top_tokens_per_lang)
     for x in lang_exts_with_dot:
         top_tokens[x] = list(df_top_tokens[x])
