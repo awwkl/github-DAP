@@ -108,14 +108,16 @@ def generate_file_lists():
     # print(df_file_list_valid['label'].value_counts())
     # print(df_file_list_test['label'].value_counts())
 
-def tokenize(filepath):
-    f = open(filepath, 'rb')
-    text = f.read().decode(errors='replace')
-
+def tokenize(text):
     # split by non-word characters, keep the matched pattern/delimiters
     tokens = re.split('(\W)', text)
     tokens = [x for x in tokens if (x != None and x.strip() != "")]
     return tokens
+
+def tokenize_file(filepath):
+    f = open(filepath, 'rb')
+    text = f.read().decode(errors='replace')
+    return tokenize(text)
 
 def build_token_dicts(dir_search='./code-repos'):
     df = pd.read_csv(path_file_list_train)
@@ -128,7 +130,7 @@ def build_token_dicts(dir_search='./code-repos'):
         if not ext in lang_exts_with_dot:
             continue
         try:
-            tokens = tokenize(filepath)
+            tokens = tokenize_file(filepath)
         except:
             continue
         
@@ -150,15 +152,18 @@ def build_token_dicts(dir_search='./code-repos'):
     print(df.head(n=num_tokens_to_show))
     print()
 
-def numerical_vector(filepath):
-    tokens = tokenize(filepath)
+def vectorize(tokens):
     num_tokens = len(tokens)
 
     counter = collections.Counter(tokens)
     vector = [counter[token] for token in top_tokens['all']]
     return vector
 
-def build_dataset():
+def vectorize_file(filepath):
+    tokens = tokenize_file(filepath)
+    return vectorize(tokens)
+
+def populate_top_tokens():
     df_top_tokens = pd.read_csv(path_top_tokens_per_lang)
     for x in lang_exts_with_dot:
         top_tokens[x] = list(df_top_tokens[x])
@@ -166,6 +171,10 @@ def build_dataset():
 
     # remove duplicated tokens from top_tokens['all']
     top_tokens['all'] = list(set(top_tokens['all']))
+
+def build_dataset():
+    populate_top_tokens()
+    
     num_features = len(top_tokens['all'])
 
     df_train = pd.DataFrame()
@@ -191,7 +200,7 @@ def build_dataset():
             continue
 
         try:
-            vector = numerical_vector(filepath)
+            vector = vectorize_file(filepath)
         except:
             continue
         y_train.append(ext)
@@ -222,7 +231,7 @@ def build_dataset():
             continue
 
         try:
-            vector = numerical_vector(filepath)
+            vector = vectorize_file(filepath)
         except:
             continue
         y_valid.append(ext)
@@ -253,7 +262,7 @@ def build_dataset():
             continue
 
         try:
-            vector = numerical_vector(filepath)
+            vector = vectorize_file(filepath)
         except:
             continue
         y_test.append(ext)
