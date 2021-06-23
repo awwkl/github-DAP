@@ -29,7 +29,7 @@ def scrape(langs_name, langs_extension, langs_url):
                 continue
 
             headers = "repo_name\n"
-            f = open(out_filename, "w")
+            f = open(out_filename, "w+")
             f.write(headers)
 
             for container in containers:
