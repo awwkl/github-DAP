@@ -12,25 +12,26 @@ def scrape(langs_name, langs_extension, langs_url):
         lang_name = langs_name[i]
         lang_url = langs_url[i]
 
+        for index in range(1, 11):
         # Get link for trending github repositories of current language
-        link = df.loc[lang_name][0]
+            link = f'https://github.com/search?l={lang_url}&p={index}&q=language%3A{lang_url}&ref=advsearch&type=Repositories'
 
-        # get HTML for the link, then find all repo names in HTML
-        uClient = uReq(link)
-        page_html = uClient.read()
-        page_soup = soup(page_html, "html.parser")
-        containers = page_soup.findAll("h1", {"class" : "h3 lh-condensed"})
+            # get HTML for the link, then find all repo names in HTML
+            uClient = uReq(link)
+            page_html = uClient.read()
+            page_soup = soup(page_html, "html.parser")
+            containers = page_soup.findAll("h1", {"class" : "h3 lh-condensed"})
 
-        # write to file e.g. "list_c++.csv"
-        out_filename = f'./repo-namelists/list_{langs_extension[i]}.csv'
-        # if repo namelist has been created, do not create again
-        if os.path.exists(out_filename):
-            continue
+            # write to file e.g. "list_c++.csv"
+            out_filename = f'./repo-namelists/list_{langs_extension[i]}.csv'
+            # if repo namelist has been created, do not create again
+            if os.path.exists(out_filename):
+                continue
 
-        headers = "repo_name\n"
-        f = open(out_filename, "w")
-        f.write(headers)
+            headers = "repo_name\n"
+            f = open(out_filename, "w")
+            f.write(headers)
 
-        for container in containers:
-            repo_name = container.a.text
-            f.write("".join(repo_name.split()) + '\n')
+            for container in containers:
+                repo_name = container.a.text
+                f.write("".join(repo_name.split()) + '\n')
