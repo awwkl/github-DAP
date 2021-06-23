@@ -4,12 +4,13 @@ from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup as soup 
 import pandas as pd
 
-def scrape(langs_name, langs_extension):
+def scrape(langs_name, langs_extension, langs_url):
     num_of_langs = len(langs_name)
-            # df = pd.read_csv('./repo-namelists/lang_list.csv', index_col=0)
+    # df = pd.read_csv('./repo-namelists/lang_list.csv', index_col=0)
 
     for i in range(num_of_langs):
         lang_name = langs_name[i]
+        lang_url = langs_url[i]
 
         # Get link for trending github repositories of current language
         link = df.loc[lang_name][0]
