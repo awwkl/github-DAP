@@ -20,7 +20,7 @@ def scrape(langs_name, langs_extension, langs_url):
             uClient = uReq(link)
             page_html = uClient.read()
             page_soup = soup(page_html, "html.parser")
-            containers = page_soup.findAll("h1", {"class" : "h3 lh-condensed"})
+            containers = page_soup.findAll("a", {"class" : "v-align-middle"})
 
             # write to file e.g. "list_c++.csv"
             out_filename = f'./repo-namelists/list_{langs_extension[i]}.csv'
