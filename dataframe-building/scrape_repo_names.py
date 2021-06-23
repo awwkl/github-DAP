@@ -6,7 +6,7 @@ import pandas as pd
 
 def scrape(langs_name, langs_extension):
     num_of_langs = len(langs_name)
-    df = pd.read_csv('./repo-namelists/lang_list.csv', index_col=0)
+            # df = pd.read_csv('./repo-namelists/lang_list.csv', index_col=0)
 
     for i in range(num_of_langs):
         lang_name = langs_name[i]
