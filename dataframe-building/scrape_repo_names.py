@@ -33,5 +33,5 @@ def scrape(langs_name, langs_extension, langs_url):
             f.write(headers)
 
             for container in containers:
-                repo_name = container.a.text
+                repo_name = container.text
                 f.write("".join(repo_name.split()) + '\n')
