@@ -10,6 +10,9 @@ max_repos_per_lang = 10
 # langs_extension = ['html', 'c', 'php']
 langs_name = ['HTML', 'Java', 'Python', 'C', 'C++', 'Ruby', 'PHP']
 langs_extension = ['html', 'java', 'py', 'c', 'cpp', 'rb', 'php']
+langs_url = ['HTML', 'Java', 'Python', 'C', 'C%2B%2B', 'Ruby', 'PHP']
+
+
 
 if __name__ == "__main__" :
     # Scrape list of languages
@@ -23,7 +26,7 @@ if __name__ == "__main__" :
     x = input('Scrape names of repositories from GitHub? [y/n]: ')
     if x.lower() in ['y', 'yes']:
         print("Scraping names of repositories from GitHub...")
-        scrape_repo_names.scrape(langs_name, langs_extension)
+        scrape_repo_names.scrape(langs_name, langs_extension, langs_url)
 
     # Clone repositories
     print()
